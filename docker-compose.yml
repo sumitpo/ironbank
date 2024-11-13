@@ -13,19 +13,6 @@ services:
       - db_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  init:
-    image: mysql:8.0.40-debian
-    depends_on:
-      - db
-    entrypoint: /bin/bash -c "apt-get update && apt-get install -y curl git && git config --global http.version HTTP/1.1 && git clone https://github.com/haggarw3/sql-bank-data.git && mv ./sql-bank-data/initdb/mysql_dump.sql /init.sql && ls && patch ./init.sql ./bank.patch && mysql -h db -u root -ptoor < /init.sql"
-    dns:
-      - 8.8.8.8
-    environment:
-      MYSQL_ROOT_PASSWORD: toor
-    volumes:
-      - db_data:/var/lib/mysql
-      - ./bank.patch:/bank.patch
-
 volumes:
   db_data:
 

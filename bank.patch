@@ -1,102 +1,89 @@
---- sql-bank-data/initdb/mysql_dump.sql	2024-11-13 00:12:18.825397125 +0800
-+++ initdb/mysql_dump.sql	2024-11-13 00:03:55.534179457 +0800
-@@ -57,10 +57,12 @@
- /*!40101 SET @saved_cs_client     = @@character_set_client */;
- /*!50503 SET character_set_client = utf8mb4 */;
- CREATE TABLE `card` (
--  `card_id` int(11) DEFAULT NULL,
-+  `card_id` int(11) not NULL,
-   `disp_id` int(11) DEFAULT NULL,
-   `type` text,
--  `issued` text
-+  `issued` text,
-+  primary key (`card_id`),
-+  CONSTRAINT `card_ibfk_1` FOREIGN KEY (`disp_id`) REFERENCES `disp` (`disp_id`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
- /*!40101 SET character_set_client = @saved_cs_client */;
- 
-@@ -82,9 +84,10 @@
- /*!40101 SET @saved_cs_client     = @@character_set_client */;
- /*!50503 SET character_set_client = utf8mb4 */;
- CREATE TABLE `client` (
--  `client_id` int(11) DEFAULT NULL,
-+  `client_id` int(11) NOT NULL,
-   `birth_number` int(11) DEFAULT NULL,
--  `district_id` int(11) DEFAULT NULL
-+  `district_id` int(11) DEFAULT NULL,
-+  primary key (`client_id`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
- /*!40101 SET character_set_client = @saved_cs_client */;
- 
-@@ -106,10 +109,13 @@
- /*!40101 SET @saved_cs_client     = @@character_set_client */;
- /*!50503 SET character_set_client = utf8mb4 */;
- CREATE TABLE `disp` (
-+  `client_id` int(11) not NULL,
-   `disp_id` int(11) DEFAULT NULL,
--  `client_id` int(11) DEFAULT NULL,
-   `account_id` int(11) DEFAULT NULL,
--  `type` text
-+  `type` text,
-+  primary key (`client_id`),
-+  CONSTRAINT `disp_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `client` (`client_id`),
-+  CONSTRAINT `disp_ibfk_2` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
- /*!40101 SET character_set_client = @saved_cs_client */;
- 
-@@ -168,13 +174,15 @@
- /*!40101 SET @saved_cs_client     = @@character_set_client */;
- /*!50503 SET character_set_client = utf8mb4 */;
- CREATE TABLE `loan` (
--  `loan_id` int(11) DEFAULT NULL,
-+  `loan_id` int(11) NOT NULL,
-   `account_id` int(11) DEFAULT NULL,
-   `date` int(11) DEFAULT NULL,
-   `amount` int(11) DEFAULT NULL,
-   `duration` int(11) DEFAULT NULL,
-   `payments` float DEFAULT NULL,
--  `status` text
-+  `status` text,
-+  PRIMARY KEY (`loan_id`),
-+  CONSTRAINT `loan_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
- /*!40101 SET character_set_client = @saved_cs_client */;
- 
-@@ -196,12 +204,14 @@
- /*!40101 SET @saved_cs_client     = @@character_set_client */;
- /*!50503 SET character_set_client = utf8mb4 */;
- CREATE TABLE `order` (
--  `order_id` int(11) DEFAULT NULL,
--  `account_id` int(11) DEFAULT NULL,
-+  `order_id` int(11) not NULL,
-+  `account_id` int(11) not NULL,
-   `bank_to` text,
-   `account_to` int(11) DEFAULT NULL,
-   `amount` float DEFAULT NULL,
--  `k_symbol` text
-+  `k_symbol` text,
-+  primary key (`order_id`),
-+  CONSTRAINT `order_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
- /*!40101 SET character_set_client = @saved_cs_client */;
- 
-@@ -223,7 +233,7 @@
- /*!40101 SET @saved_cs_client     = @@character_set_client */;
- /*!50503 SET character_set_client = utf8mb4 */;
- CREATE TABLE `trans` (
--  `trans_id` int(11) DEFAULT NULL,
-+  `trans_id` int(11) NOT NULL,
-   `account_id` int(11) DEFAULT NULL,
-   `date` int(11) DEFAULT NULL,
-   `type` text,
-@@ -232,7 +242,9 @@
-   `balance` float DEFAULT NULL,
-   `k_symbol` text,
-   `bank` text,
--  `account` int(11) DEFAULT NULL
-+  `account` int(11) DEFAULT NULL,
-+  primary key (`trans_id`),
-+  CONSTRAINT `trans_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
- /*!40101 SET character_set_client = @saved_cs_client */;
- 
+34c34
+<   `account_id` int(11) NOT NULL,
+---
+>   `account_id` int(11) unique NOT NULL,
+38c38,39
+<   PRIMARY KEY (`account_id`)
+---
+>   PRIMARY KEY (`account_id`),
+>   CONSTRAINT `account_ibfk_1` FOREIGN KEY (`district_id`) REFERENCES `district` (`district_id`)
+60,61c61,62
+<   `card_id` int(11) DEFAULT NULL,
+<   `disp_id` int(11) DEFAULT NULL,
+---
+>   `card_id` int(11) unique not NULL,
+>   `disp_id` int(11) not NULL,
+63c64,66
+<   `issued` text
+---
+>   `issued` text,
+>   primary key (`card_id`),
+>   CONSTRAINT `card_ibfk_1` FOREIGN KEY (`disp_id`) REFERENCES `disp` (`disp_id`)
+85c88,89
+<   `client_id` int(11) DEFAULT NULL,
+---
+>   `client_id` int(11) unique NOT NULL,
+>   `district_id` int(11) DEFAULT NULL,
+87c91,92
+<   `district_id` int(11) DEFAULT NULL
+---
+>   primary key (`client_id`),
+>   CONSTRAINT `client_ibfk_1` FOREIGN KEY (`district_id`) REFERENCES `district` (`district_id`)
+109,110c114,115
+<   `disp_id` int(11) DEFAULT NULL,
+<   `client_id` int(11) DEFAULT NULL,
+---
+>   `disp_id` int(11) unique not null,
+>   `client_id` int(11) not NULL,
+112c117,120
+<   `type` text
+---
+>   `type` text,
+>   primary key (`disp_id`),
+>   CONSTRAINT `disp_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `client` (`client_id`),
+>   CONSTRAINT `disp_ibfk_2` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`)
+134,136c142,144
+<   `A1` int(11) DEFAULT NULL,
+<   `A2` text,
+<   `A3` text,
+---
+>   `district_id` int(11) NOT NULL,
+>   `district_name` text,
+>   `region` text,
+149c157,158
+<   `A16` int(11) DEFAULT NULL
+---
+>   `A16` int(11) DEFAULT NULL,
+>   primary key (`district_id`)
+171c180
+<   `loan_id` int(11) DEFAULT NULL,
+---
+>   `loan_id` int(11) NOT NULL,
+177c186,188
+<   `status` text
+---
+>   `status` text,
+>   PRIMARY KEY (`loan_id`),
+>   CONSTRAINT `loan_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`)
+199,200c210,211
+<   `order_id` int(11) DEFAULT NULL,
+<   `account_id` int(11) DEFAULT NULL,
+---
+>   `order_id` int(11) not NULL,
+>   `account_id` int(11) not NULL,
+204c215,217
+<   `k_symbol` text
+---
+>   `k_symbol` text,
+>   primary key (`order_id`),
+>   CONSTRAINT `order_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`)
+226c239
+<   `trans_id` int(11) DEFAULT NULL,
+---
+>   `trans_id` int(11) NOT NULL,
+235c248,250
+<   `account` int(11) DEFAULT NULL
+---
+>   `account` int(11) DEFAULT NULL,
+>   primary key (`trans_id`),
+>   CONSTRAINT `trans_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `account` (`account_id`)
