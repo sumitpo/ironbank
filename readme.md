@@ -24,3 +24,6 @@ pandoc readme.md -o readme.pdf
 go install github.com/RadhiFadlillah/sqldiagram@latest
 sqldiagram mysql sql-bank-data/initdb/mysql_dump.sql -o ironbank.svg
 ```
+
+# generate fake but realistic test data
+[ruby faker](https://github.com/faker-ruby/faker)
