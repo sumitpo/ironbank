@@ -3,33 +3,30 @@ CREATE TABLE `customers` (
   `first_name` VARCHAR(20),
   `last_name` VARCHAR(40),
   `city` VARCHAR(50),
-  `mobile_no` VARCHAR COMMENT 'mobile phone number',
-  `pancard_no` VARCHAR,
+  `mobile_no` VARCHAR(20) COMMENT 'mobile phone number',
+  `IDcard_no` VARCHAR(18),
   `dob` date COMMENT 'date of birth',
-  `created_at` timestamp DEFAULT "now()",
+  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `update_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` timestamp
-);
+) ENGINE = InnoDB;
 
-CREATE INDEX `customers_index_0` ON `customers` (`customer_id`);
+CREATE INDEX `customers_index_fname` ON `customers` (`first_name`);
 
-CREATE INDEX `customers_index_1` ON `customers` (`first_name`);
+CREATE INDEX `customers_index_lname` ON `customers` (`last_name`);
 
-CREATE INDEX `customers_index_2` ON `customers` (`last_name`);
-
-CREATE TABLE `branchs` (
+CREATE TABLE `branches` (
   `branch_id` int PRIMARY KEY AUTO_INCREMENT,
-  `branch_name` VARCHAR,
-  `branch_location` VARCHAR,
-  `created_at` timestamp DEFAULT "now()",
+  `branch_name` VARCHAR(100),
+  `branch_location` VARCHAR(200),
+  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` timestamp
-);
-
-CREATE INDEX `branchs_index_3` ON `branchs` (`branch_id`);
+) ENGINE = InnoDB;
 
 CREATE TABLE `accounts` (
   `account_id` bigserial PRIMARY KEY,
   `customer_id` int,
-  `balance` bigint,
+  `balance` decimal(25, 2),
   `account_status` enum(
     'Inactive',
     'Withdrawn',
@@ -49,9 +46,9 @@ CREATE TABLE `accounts` (
     'fixed desposit'
   ) not null default 'current account' comment 'account type, to be completed',
   `currency` enum('cny', 'usd', 'eur') not null default 'cny' comment 'currency, default chinese currency cny (also rmb)',
-  `created_at` timestamp DEFAULT "now()",
+  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` timestamp
-);
+) ENGINE = InnoDB;
 
 ALTER TABLE `accounts`
 ADD FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`);
@@ -64,7 +61,7 @@ CREATE TABLE `transactions` (
   `from_account_id` bigint,
   `to_account_id` bigint,
   `date_issued` date,
-  `amount` bigint,
+  `amount` decimal(25, 2),
   `transaction_medium` enum(
     'ATM',
     'mobile',
@@ -72,9 +69,11 @@ CREATE TABLE `transactions` (
     'manual service',
     'other'
   ) not null,
-  `created_at` timestamp DEFAULT "now()",
+  `status` enum("pending", "failed", "success") not null default "pending",
+  `reference` bigint,
+  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` timestamp
-);
+) ENGINE = InnoDB;
 
 ALTER TABLE `transactions`
 ADD FOREIGN KEY (`from_account_id`) REFERENCES `accounts` (`account_id`);
@@ -92,14 +91,14 @@ CREATE TABLE `loans` (
   `loan_id` bigserial PRIMARY KEY,
   `customer_id` int,
   `branch_id` int,
-  `loan_amount` bigint,
+  `loan_amount` decimal(25, 2),
   `date_issued` date,
-  `created_at` timestamp DEFAULT "now()",
+  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   `deleted_at` timestamp
-);
+) ENGINE = InnoDB;
 
 ALTER TABLE `loans`
 ADD FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`);
 
 ALTER TABLE `loans`
-ADD FOREIGN KEY (`branch_id`) REFERENCES `branchs` (`branch_id`);
+ADD FOREIGN KEY (`branch_id`) REFERENCES `branches` (`branch_id`);
